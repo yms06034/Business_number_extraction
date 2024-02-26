@@ -185,6 +185,6 @@ def final_logic(browser, ka_kw):
 
         df.to_excel(f'{folder}/{ka_kw} 전화번호 DB.xlsx', index=False)
     else:
-        pass
+        return 0
     
     return 1

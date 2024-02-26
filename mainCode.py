@@ -33,7 +33,9 @@ class SeleniumThread(QThread):
 
         if all([self.keyword_list]):
             total_iterations = len(self.keyword_list)
-
+            progress_count = 0
+            progress = 100 / total_iterations
+            self.progress_signal.emit(progress_count)
             try:
                 self.log_signal.emit("프로그램을 시작합니다.")
                 self.browser = api.open_browser()
@@ -47,17 +49,23 @@ class SeleniumThread(QThread):
                         self.log_signal.emit(f"{ka_kw} 키워드로 추출이 완료되었습니다.")
                         self.log_signal.emit(f"{ka_kw} 키워드로 엑셀 저장이 완료되었습니다.")
                         self.log_signal.emit(f"----------------------------")
-
-                        progress = 0
-                        progress = 100 / total_iterations
-                        self.progress_signal.emit(progress)
-
+                        progress_count += progress
+                        self.progress_signal.emit(progress_count)
                     elif result == 2:
-                        self.log_signal(f"{ka_kw}에서 오류가 발생하였습니다. \t\n프로그램을 다시 돌려주세요.")
+                        self.log_signal.emit(f"{ka_kw}에서 오류가 발생하였습니다. \t\n프로그램을 다시 돌려주세요.")
+                        self.log_signal.emit(f"----------------------------")
+                    elif result == 0:
+                        self.log_signal.emit(f"{ka_kw}는 검색 결과가 없습니다. 다음 키워드로 넘어갑니다.")
+                        progress_count += progress
+                        self.progress_signal.emit(progress_count)
+                        self.log_signal.emit(f"----------------------------")
 
                 self.browser.quit()
+
+                self.log_signal.emit(f"모든 작업이 완료되었습니다.")
+                self.log_signal.emit(f"----------------------------")
             except Exception as e:
-                self.log_signal(f"{ka_kw}에서 오류가 발생하였습니다. \t\n{str(e)}")
+                self.log_signal.emit(f"{ka_kw}에서 오류가 발생하였습니다. \t\n{str(e)}")
             finally:
                 self.finished_signal.emit()
                     
