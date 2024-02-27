@@ -127,6 +127,7 @@ class MainWindow(QMainWindow):
                 
                 if not p.lower().endswith('.txt'):
                     QMessageBox.information(self, NAME, ".txt 확장자만 넣을 수 있습니다. \t\n파일 확장자를 다시 확인해주세요.")
+                    return
                 
                 file = open(p, 'rt', encoding='UTF8')
                 while True:
